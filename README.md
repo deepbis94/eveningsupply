@@ -104,6 +104,23 @@ npm run lint     # ESLint
 
 Open [http://localhost:3000](http://localhost:3000).
 
+---
+
+## Deploy
+
+### Hostinger (`production` branch)
+
+Shared hosting serves `public_html`. The `production` branch is only the built static export (`index.html` at the root). In hPanel, point Git deploy at that branch and set the directory to `public_html`.
+
+Pushes to `main` build the app and update `production`. To do the same locally:
+
+```bash
+NEXT_PUBLIC_API_BASE_URL=https://mstorebacknew.creativeventure.space/api/v1 npm run publish
+git push origin production
+```
+
+Override the baked-in API URL with a GitHub Actions variable or secret named `NEXT_PUBLIC_API_BASE_URL`.
+
 ### Why `--webpack`?
 
 `package.json` sets `"dev": "next dev --webpack"` on purpose. Turbopack can misbehave with this project’s Docker and iCloud Drive paths, so the webpack bundler is the default for local development.

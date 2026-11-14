@@ -1,36 +1,150 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DEB ENTERPRISE — Evening Business Management Frontend
 
-## Getting Started
+> Next.js app for **evening** wholesale/retail operations: sales entry, billing, payments, inventory, customers, and reporting.
 
-First, run the development server:
+**Daily** (daytime) workflows live in the sibling `vue-app` project against daily APIs. This Next app uses Evening customers/bills (`/customers-evening`, `/customer-bills-evening`, `/products-evening`) where API paths named `yesterday-date` typically mean the **current business/settlement day (today)**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+**Stack:** Next.js App Router · TypeScript · React 19 · Zustand · Axios · Bootstrap 5 · react-toastify
+
+---
+
+## About the Project
+
+**DEB ENTERPRISE** evening frontend mirrors the daily Vue app for the night shift — group-wise sales entry, current orders, payments, totals, and master data against the evening session tables.
+
+### What it solves
+
+- **Evening sales at scale** — step-based entry by customer group with a sticky footer and keyboard-friendly quantity inputs
+- **End-to-end billing** — current bills, settlement-date payments, balances, and dues
+- **Operations & reporting** — evening product totals, payment summaries, CSV/PDF exports, and date-range history
+- **Master data management** — evening customers, groups (including member assignment), products, and company settings
+
+---
+
+## Tech Stack
+
+| Layer | Tools |
+| --- | --- |
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript + React 19 |
+| State | Zustand (evening sales grid) |
+| HTTP | Axios |
+| UI | Bootstrap 5 (npm) + Font Awesome via CDN |
+| Feedback | react-toastify |
+
+---
+
+## Modules at a Glance
+
+| Module | What it does |
+| --- | --- |
+| Dashboard | Stats and quick links |
+| Evening Sales | Group-wise quantity entry and bulk save |
+| Evening Total | Product summary by group + CSV/PDF export |
+| Current Orders | Today’s evening bills + group PDF print |
+| Order Payment | Settlement-date bills + payment entry |
+| Order History | Date-range search, export, bulk delete |
+| Payment Total | Payment totals by customer group (defaults to today) |
+| Customers | CRUD, filters, **Import CSV** / **Reset CSV**, export |
+| Groups | CRUD + manage members (bulk assign / move) |
+| Products | CRUD, **Import CSV** / **Reset CSV**, export |
+| Company Info | Profile and settings |
+
+### CSV import modes
+
+| Button | API `mode` | Behavior |
+| --- | --- | --- |
+| **Import CSV** | `upsert` (default) | Merge/update from file; keep rows not in the CSV |
+| **Reset CSV** | `reset` | Replace all records with the CSV; delete rows missing from the file (confirm first) |
+
+---
+
+## Architecture
+
+```text
+src/
+  app/               App Router pages by domain
+  components/        Shared UI + evening-sales + order bill table
+  lib/api/           Axios client + feature API modules
+  lib/utils/         Dates, CSV/PDF download, amounts, toast helpers
+  stores/            Zustand evening sales store
+  types/             Shared TypeScript models
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Design choices**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- One Axios client via `lib/api/client.ts` (`NEXT_PUBLIC_API_BASE_URL`)
+- Reusable `PageHeader`, `LoadingState`, `EmptyState`, `PaginationControls`, `CustomerBillTable`
+- Brand: **DEB ENTERPRISE**; toast for action feedback
+- Evening products use a **single `product_rate`** (not daily multi-rate / `rate_type` selection)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Quick Start
 
-To learn more about Next.js, take a look at the following resources:
+**Requirements:** Node.js, npm, running backend API
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+cd next-app
+npm install
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Configure API in `.env.local` (matches docker nginx on port 80 by default):
 
-## Deploy on Vercel
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost/api/v1
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run dev      # next dev --webpack
+npm run build    # production build
+npm run start    # serve production build
+npm run lint     # ESLint
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open [http://localhost:3000](http://localhost:3000).
+
+### Why `--webpack`?
+
+`package.json` sets `"dev": "next dev --webpack"` on purpose. Turbopack can misbehave with this project’s Docker and iCloud Drive paths, so the webpack bundler is the default for local development.
+
+---
+
+## Routes
+
+| Path | Feature |
+| --- | --- |
+| `/` | Dashboard |
+| `/sales/evening` | Evening sales |
+| `/sales/total` | Evening totals |
+| `/order/list` | Current orders |
+| `/order/payment` | Order payment |
+| `/order/delete` | Delete current orders |
+| `/order/history` | Order history |
+| `/pay/total` | Payment totals |
+| `/customers/evening` | Evening customers |
+| `/customers/groups` | Customer groups |
+| `/product/list` | Products |
+| `/info/company` | Company settings |
+
+---
+
+## Evening vs daily
+
+| Topic | This app (`next-app`) | Daily app (`vue-app`) |
+| --- | --- | --- |
+| API prefixes | `*-evening` | daily / non-evening |
+| Settlement / `yesterday-date` | Usually **today** | Calendar **yesterday** |
+| Product pricing | Single `product_rate` | Multiple rates via `rate_type` |
+| State | Zustand | Pinia |
+
+---
+
+## Notes
+
+- Evening-only frontend; daily UI is in `vue-app`
+- Font Awesome is loaded from CDN; Bootstrap is an npm dependency
+- Monetary values are shown as integers (rounded up)
+- Do not apply next-app “yesterday = today” semantics to the Vue daily app
+
+**License:** Private / project use

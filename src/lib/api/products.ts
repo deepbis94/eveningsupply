@@ -82,5 +82,7 @@ function mapApiProduct(product: any): Product {
     color: product.color ?? '#ffffff',
     is_visible:
       product.is_visible == true || product.is_visible === 'Yes' ? 'Yes' : 'No',
+    created_at: product.created_at ?? null,
+    updated_at: product.updated_at ?? null,
   }
 }

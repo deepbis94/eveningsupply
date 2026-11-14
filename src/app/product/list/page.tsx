@@ -22,6 +22,7 @@ import {
   importProductsCsv,
   updateProduct,
 } from '@/lib/api/products'
+import { formatShortUpdatedAt, formatUpdatedAtTitle } from '@/lib/utils/dateLabels'
 import { downloadBlob, getExportFileName } from '@/lib/utils/download'
 import { formatRateValue } from '@/lib/utils/roundAmount'
 import { toast } from '@/lib/utils/toast'
@@ -336,6 +337,7 @@ function ProductListContent() {
                     <th>Display</th>
                     <th>Order</th>
                     <th>Color</th>
+                    <th>Updated</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -359,6 +361,12 @@ function ProductListContent() {
                               }}
                             />
                           </div>
+                        </td>
+                        <td
+                          className="text-nowrap text-muted small"
+                          title={formatUpdatedAtTitle(item.updated_at)}
+                        >
+                          {formatShortUpdatedAt(item.updated_at)}
                         </td>
                         <td>
                           <div style={{ display: 'flex', gap: 6, padding: 6 }}>

@@ -13,4 +13,6 @@ export interface Product {
   extra_rate?: number | string
   is_visible?: string
   color?: string
+  created_at?: string | null
+  updated_at?: string | null
 }

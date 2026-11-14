@@ -23,6 +23,7 @@ import {
   updateEveningCustomer,
 } from '@/lib/api/customers'
 import { getCustomerGroups } from '@/lib/api/customerGroups'
+import { formatShortUpdatedAt, formatUpdatedAtTitle } from '@/lib/utils/dateLabels'
 import { downloadBlob, getExportFileName } from '@/lib/utils/download'
 import { formatRateValue, toMoneyAmount } from '@/lib/utils/roundAmount'
 import { toast } from '@/lib/utils/toast'
@@ -452,6 +453,7 @@ function CustomerListContent() {
                 <th>Name</th>
                 <th>Group</th>
                 <th>Due</th>
+                <th>Updated</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -462,6 +464,12 @@ function CustomerListContent() {
                     <td>{item.customer_name}</td>
                     <td>{item.group}</td>
                     <td>{item.due}</td>
+                    <td
+                      className="text-nowrap text-muted small"
+                      title={formatUpdatedAtTitle(item.updated_at)}
+                    >
+                      {formatShortUpdatedAt(item.updated_at)}
+                    </td>
                     <td>
                       <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button

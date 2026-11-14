@@ -15,6 +15,7 @@ import {
   bulkAssignEveningCustomers,
   getEveningCustomers,
 } from '@/lib/api/customers'
+import { formatShortUpdatedAt, formatUpdatedAtTitle } from '@/lib/utils/dateLabels'
 import { toast } from '@/lib/utils/toast'
 import type { CustomerGroup } from '@/types/CustomerGroup'
 import type { EveningCustomer } from '@/types/EveningCustomer'
@@ -341,6 +342,7 @@ export default function CustomerGroupsPage() {
                 <th>Name</th>
                 <th>Position</th>
                 <th>Visible</th>
+                <th>Updated</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -356,6 +358,12 @@ export default function CustomerGroupsPage() {
                     >
                       {item.visible ? 'Yes' : 'No'}
                     </span>
+                  </td>
+                  <td
+                    className="text-nowrap text-muted small"
+                    title={formatUpdatedAtTitle(item.updated_at)}
+                  >
+                    {formatShortUpdatedAt(item.updated_at)}
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>

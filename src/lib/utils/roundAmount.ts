@@ -1,25 +1,37 @@
-export function roundUpAmount(value: number | string | null | undefined): number {
-  const numeric = Number(value ?? 0)
+export function toMoneyAmount(value: number | string | null | undefined): number {
+  if (value == null || value === '') {
+    return 0
+  }
+
+  const numeric = Number(typeof value === 'string' ? value.trim() : value)
 
   if (!Number.isFinite(numeric)) {
     return 0
   }
 
-  return Math.ceil(numeric)
+  return numeric
 }
 
-export function toMoneyAmount(value: number | string | null | undefined): number {
-  const numeric = Number(value ?? 0)
-
-  if (!Number.isFinite(numeric)) {
-    return 0
+function amountText(value: number | string): string {
+  if (typeof value === 'string') {
+    return value.trim()
   }
 
-  return Math.round((numeric + Number.EPSILON) * 100) / 100
+  // Drop binary float noise (10.1 + 20.2) without changing a real decimal.
+  return String(Number(value.toPrecision(12)))
 }
 
 export function formatAmount(value: number | string | null | undefined): string {
-  return String(formatRateValue(toMoneyAmount(value).toFixed(2)))
+  if (value == null || value === '') {
+    return '0'
+  }
+
+  const raw = amountText(value)
+  if (raw === '' || raw === '.' || !Number.isFinite(Number(raw))) {
+    return '0'
+  }
+
+  return String(formatRateValue(raw))
 }
 
 export function formatRateValue(

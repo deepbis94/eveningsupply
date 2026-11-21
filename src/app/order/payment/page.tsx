@@ -63,9 +63,7 @@ export default function OrderPaymentPage() {
   )
 
   function calculateBillBalance(bill: CustomerBillApiRecord, payment: number) {
-    return toMoneyAmount(
-      Math.max(getCustomerTotalBill(bill) - toMoneyAmount(payment || 0), 0)
-    )
+    return getCustomerTotalBill(bill) - toMoneyAmount(payment || 0)
   }
 
   function initializePaymentState(nextBills: CustomerBillApiRecord[]) {

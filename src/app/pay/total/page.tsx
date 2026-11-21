@@ -11,7 +11,7 @@ import {
   getTodayDateInputValue,
 } from '@/lib/utils/dateLabels'
 import { downloadCsv } from '@/lib/utils/download'
-import { formatAmount, roundUpAmount } from '@/lib/utils/roundAmount'
+import { formatAmount, toMoneyAmount } from '@/lib/utils/roundAmount'
 import { toast } from '@/lib/utils/toast'
 import type { GroupedPaymentTotal } from '@/types/PaymentTotal'
 
@@ -29,7 +29,7 @@ export default function PaymentTotalPage() {
   const grandTotalBill = useMemo(
     () =>
       groupTotals.reduce(
-        (sum, item) => sum + roundUpAmount(item.total_bill ?? 0),
+        (sum, item) => sum + toMoneyAmount(item.total_bill ?? 0),
         0
       ),
     [groupTotals]
@@ -38,7 +38,7 @@ export default function PaymentTotalPage() {
   const grandTotalPayment = useMemo(
     () =>
       groupTotals.reduce(
-        (sum, item) => sum + roundUpAmount(item.total_payment ?? 0),
+        (sum, item) => sum + toMoneyAmount(item.total_payment ?? 0),
         0
       ),
     [groupTotals]

@@ -132,7 +132,7 @@ function CustomerListContent() {
           customer_name: c.customer_name,
           group: c.group ?? '',
           customer_group_id: c.customer_group_id ?? null,
-          due: formatRateValue(toMoneyAmount(c.due ?? 0).toFixed(2)),
+          due: formatRateValue(c.due ?? 0),
           created_at: c.created_at,
           updated_at: c.updated_at,
         }))

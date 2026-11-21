@@ -1,5 +1,5 @@
 import { apiClient } from '@/lib/api/client'
-import { formatRateValue, toMoneyAmount } from '@/lib/utils/roundAmount'
+import { formatRateValue } from '@/lib/utils/roundAmount'
 import type { EveningCustomer } from '@/types/EveningCustomer'
 import type { PaginatedResponse } from '@/types/Pagination'
 
@@ -70,7 +70,7 @@ function mapEveningCustomer(customer: any): EveningCustomer {
     group: customer.customer_group?.group_name ?? '',
     customer_group_id:
       customer.customer_group?.customer_group_id ?? customer.customer_group_id ?? null,
-    due: formatRateValue(toMoneyAmount(customer.due_amount).toFixed(2)),
+    due: formatRateValue(customer.due_amount ?? 0),
     created_at: customer.created_at,
     updated_at: customer.updated_at,
   }

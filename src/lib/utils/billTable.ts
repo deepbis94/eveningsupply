@@ -1,4 +1,4 @@
-import { roundUpAmount, toMoneyAmount } from '@/lib/utils/roundAmount'
+import { toMoneyAmount } from '@/lib/utils/roundAmount'
 import type {
   CustomerBillApiProduct,
   CustomerBillApiRecord,
@@ -86,5 +86,5 @@ export function getPreviousDue(bill: CustomerBillApiRecord) {
 }
 
 export function getCustomerTotalBill(bill: CustomerBillApiRecord) {
-  return roundUpAmount(getPreviousDue(bill) + toMoneyAmount(bill.total_bill ?? 0))
+  return getPreviousDue(bill) + toMoneyAmount(bill.total_bill ?? 0)
 }

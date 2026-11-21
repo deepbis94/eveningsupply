@@ -8,7 +8,7 @@ import {
   loadGroupBills as fetchGroupBills,
   saveEveningBillsBulk,
 } from '@/lib/api/eveningSales'
-import { roundUpAmount, toMoneyAmount } from '@/lib/utils/roundAmount'
+import { toMoneyAmount } from '@/lib/utils/roundAmount'
 import type {
   CustomerBill,
   CustomerBillApiRecord,
@@ -192,7 +192,7 @@ export const useEveningSalesStore = create<EveningSalesState>((set, get) => {
     }
 
     let changed = false
-    const roundedDue = roundUpAmount(dueAmount)
+    const due = toMoneyAmount(dueAmount)
 
     const billCustomerId = Number(bill.customer_id)
     const nextGroups = groups.map(group => {
@@ -204,13 +204,13 @@ export const useEveningSalesStore = create<EveningSalesState>((set, get) => {
       }
 
       const customer = group.customers[customerIndex]
-      if (customer.due === roundedDue) {
+      if (customer.due === due) {
         return group
       }
 
       changed = true
       const customers = [...group.customers]
-      customers[customerIndex] = { ...customer, due: roundedDue }
+      customers[customerIndex] = { ...customer, due }
       return { ...group, customers }
     })
 
@@ -344,7 +344,7 @@ export const useEveningSalesStore = create<EveningSalesState>((set, get) => {
         }
 
         const rate = getProductRate(product)
-        const productTotal = toMoneyAmount(rate * qty)
+        const productTotal = rate * qty
 
         billProducts.push({
           product_name: product.product_name,
@@ -362,9 +362,9 @@ export const useEveningSalesStore = create<EveningSalesState>((set, get) => {
         continue
       }
 
-      const totalAmount = toMoneyAmount(totalBill)
+      const totalAmount = totalBill
       const payment = 0
-      const duePaid = roundUpAmount(customer?.due ?? 0)
+      const duePaid = toMoneyAmount(customer?.due ?? 0)
 
       bills.push({
         customer_id: customerId,

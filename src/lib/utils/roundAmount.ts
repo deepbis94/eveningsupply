@@ -1,3 +1,15 @@
+// Same rule as the evening bill print total: 50 paisa and above becomes
+// the next rupee, under 50 paisa becomes .00.
+export function roundRupee(value: number | string | null | undefined): number {
+  const numeric = toMoneyAmount(value)
+  const sign = numeric < 0 ? -1 : 1
+  const paisa = Math.round(Math.abs(numeric) * 100)
+  const whole = Math.floor(paisa / 100)
+  const fraction = paisa % 100
+
+  return sign * (fraction >= 50 ? whole + 1 : whole)
+}
+
 export function toMoneyAmount(value: number | string | null | undefined): number {
   if (value == null || value === '') {
     return 0

@@ -27,7 +27,7 @@ import {
   getPreviousDue,
 } from '@/lib/utils/billTable'
 import { getTodayLabel } from '@/lib/utils/dateLabels'
-import { formatAmount, toMoneyAmount } from '@/lib/utils/roundAmount'
+import { formatAmount, roundRupee, toMoneyAmount } from '@/lib/utils/roundAmount'
 import { toast } from '@/lib/utils/toast'
 import type { CustomerBillApiRecord } from '@/types/CustomerBill'
 import type { Product } from '@/types/Product'
@@ -62,14 +62,18 @@ export default function OrderPaymentPage() {
     [bills]
   )
 
+  function payableBill(bill: CustomerBillApiRecord) {
+    return roundRupee(getCustomerTotalBill(bill))
+  }
+
   function calculateBillBalance(bill: CustomerBillApiRecord, payment: number) {
-    return getCustomerTotalBill(bill) - toMoneyAmount(payment || 0)
+    return payableBill(bill) - toMoneyAmount(payment || 0)
   }
 
   function initializePaymentState(nextBills: CustomerBillApiRecord[]) {
     const balances: Record<number, number> = {}
     for (const bill of nextBills) {
-      balances[bill.customer_bill_id] = getCustomerTotalBill(bill)
+      balances[bill.customer_bill_id] = payableBill(bill)
     }
     setPaymentInputs({})
     setBalanceInputs(balances)
@@ -304,7 +308,7 @@ export default function OrderPaymentPage() {
               <td className="text-end fw-bold">{formatAmount(bill.total_bill)}</td>
               <td className="text-end">{formatAmount(getPreviousDue(bill))}</td>
               <td className="text-end fw-bold">
-                {formatAmount(getCustomerTotalBill(bill))}
+                {formatAmount(payableBill(bill))}
               </td>
               <td>
                 <input
@@ -327,7 +331,7 @@ export default function OrderPaymentPage() {
               </td>
               <td className="text-end fw-bold">
                 {formatAmount(
-                  balanceInputs[bill.customer_bill_id] ?? getCustomerTotalBill(bill)
+                  balanceInputs[bill.customer_bill_id] ?? payableBill(bill)
                 )}
               </td>
             </>
